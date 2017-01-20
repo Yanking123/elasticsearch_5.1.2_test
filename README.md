@@ -3,4 +3,5 @@
 - 但是api的改变也不是很大，基本上原来的api都能用，除了script去除了groovy，新增了painless语言，使用起来也是差不多的，
 - 还有updatebyquery，deletebyquery，5.1.2都自带了，不用addPlugin的方式增加到client上，这点是很好的。
 - rest客户端还没接触，待研究  
-## 必须提醒 使用的jdk版本必须是1.8以上的，1.7的不能运行
+
+## 必须提醒使用的jdk版本必须是1.8以上的，1.7的不能运行
