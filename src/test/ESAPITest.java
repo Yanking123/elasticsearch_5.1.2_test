@@ -13,14 +13,21 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
 /**
- * Hello world!
- *
+ * 
+ * <pre>
+ * es 客户端api测试。
+ * </pre>
+ * @author 王文辉  wangwenhui@jiaxincloud.com
+ * @version 1.00.00
+ * <pre>
+ * 修改记录
+ *    修改后版本:     修改人：  修改日期:     修改内容: 
+ * </pre>
  */
-public class SatisfyTest extends EsJdbcDaoSupport {
+public class ESAPITest extends EsJdbcDaoSupport {
 
 	public  static void main(String[] args) throws Exception {
-		System.out.println("Hello World!");
-		SatisfyTest st =new SatisfyTest();
+		ESAPITest st =new ESAPITest();
 //		st.updateIndex();
 //		st.createSDRIndex();
 //		st.testDelete();
@@ -32,26 +39,30 @@ public class SatisfyTest extends EsJdbcDaoSupport {
 //		st.testDeleteIndex();
 	}
 
+	/**
+	 * 创建es index
+	 * @throws Exception
+	 */
 	public  void createSDRIndex() throws Exception {
 		XContentBuilder mapping = XContentFactory.jsonBuilder()
 				.startObject()
 				.startObject("settings")
-				.field("number_of_shards", 5)// ���÷�Ƭ����
-				.field("number_of_replicas", 0)// ���ø�������
+				.field("number_of_shards", 5) //分片
+				.field("number_of_replicas", 0)//副片
 				.endObject()
 					.startObject("mappings")
-						.startObject("TEST3")// type����
-								.startObject("properties") // �����������ĵ������ԡ�
-							.startObject("QS_ENTERPRISE_ID").field("type", "keyword").endObject()
+						.startObject("TEST3")//type
+								.startObject("properties") 
+							.startObject("QS_ENTERPRISE_ID").field("type", "keyword").endObject() //字段名
 							.startObject("QS_SESSION_ID").field("type", "keyword").endObject()
-							.startObject("QS_ID").field("type", "keyword").endObject()
+							.startObject("QS_ID").field("type", "keyword").endObject() //keyword 为不分析，text为分析字段
 								.endObject()
 						.endObject()
 					.endObject()
 					.endObject();
 
 		TransportClient client =EsConnectionFactory.createEsClient();
-		CreateIndexRequestBuilder cirb = client.admin().indices().prepareCreate("test3")// index����
+		CreateIndexRequestBuilder cirb = client.admin().indices().prepareCreate("test3")//index名
 				.setSource(mapping);
 		CreateIndexResponse response = cirb.execute().actionGet();
 		if (response.isAcknowledged()) {
@@ -62,6 +73,9 @@ public class SatisfyTest extends EsJdbcDaoSupport {
 		client.close();
 	}
 
+	/**
+	 * 更新index 字段
+	 */
 	public void updateIndex(){
 		TransportClient client =EsConnectionFactory.createEsClient();
 		client.admin().indices().preparePutMapping("test3")   
@@ -77,7 +91,9 @@ public class SatisfyTest extends EsJdbcDaoSupport {
 	}
 	
 	
-	
+	/**
+	 * 插入doc
+	 */
 	public  void putSDR() {
 		Map<String, Object> json = new HashMap<String, Object>();
 		json.put("QS_ID", "20160829152817");
@@ -87,30 +103,18 @@ public class SatisfyTest extends EsJdbcDaoSupport {
 		System.out.println("insert success.");
 	}
 	
+	/**
+	 * 更新doc
+	 */
 	public  void  updateSDR() {
-//		Map<String, Object> json = new HashMap<String, Object>();
-//		json.put("SS_TIME", "20160829152817");
-//		json.put("SS_ENTERPRISE_ID", "ctdiznh1b3rnbg");
-//		json.put("SS_SESSION_ID", "fhnxzt13015");
-//		json.put("SS_AGENT_ID", "ctdiznh1b3raget#mcs_cd5752786745fe80b3f7ced4de648d0a");
-//		json.put("SS_SATISFY_SCORE", 1);
-//		json.put("SS_APP_NAME", "aa588");
-//		json.put("SS_VISITOR_ID", "ctdiznh1b3rhui#aa588_web3178352725333775");
-//		json.put("SS_WORKGROUP_ID", "ctdiznh1b3shzxhui#service5752786745fe80b3f7ced4de648d0a");
-////		insert("st_agent_satisfy_sdr", "ST_AGENT_SATISFY_SDR", json);
 		SatisfySDREntity s=new SatisfySDREntity();
-//		s.setSsTime("20160829152817");
-//		s.setSsEnterpriseId("ctdiznh1b3rnbg");
-//		s.setSsAgentId("ctdiznh1b3raget#mcs_cd5752786745fe80b3f7ced4de648d0a");
-//		s.setSsAppName("aa588");
-//		s.setSsVisitorId("ctdiznh1b3rhui#aa588_web3178352725333775");
-//		s.setChannelNo("2001");
-//		s.setWorkgroupId("wenhuicshizu");
-//		s.setSsSatisfyScore(90);
-//		s.setSsSessionId("fhnxzt13015-wenhui");
 		update("test3", "TEST3", s);
-//		System.out.println("update success.");
 	}
+	
+	/**
+	 * 通过sql 插件查询es数据
+	 * @throws Exception
+	 */
     public  void testJDBC() throws Exception {
     	String sql="SELECT * from test3 group by QS_SESSION_ID";
     	ResultSet rs=query(sql,"test3");
@@ -129,10 +133,18 @@ public class SatisfyTest extends EsJdbcDaoSupport {
   }
       
     }
+    
+    /**
+     * 查询删除API
+     * @throws Exception
+     */
     public  void testDelete() throws Exception {
     	System.out.println(delete ("test3","fhnxzt13015-hui"));
     }
     
+    /**
+     *删除索引
+     */
   public void testDeleteIndex(){
 		TransportClient client =EsConnectionFactory.createEsClient();
 	      DeleteIndexResponse dResponse = client.admin().indices().prepareDelete("test2")
