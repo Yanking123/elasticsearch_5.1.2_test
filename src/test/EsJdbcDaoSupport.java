@@ -4,22 +4,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.health.ClusterIndexHealth;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.BulkIndexByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryAction;
-import org.elasticsearch.index.reindex.UpdateByQueryAction;
-import org.elasticsearch.index.reindex.UpdateByQueryRequestBuilder;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.script.ScriptType;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
@@ -70,64 +69,52 @@ public class EsJdbcDaoSupport {
 	 */
 	public void update(String index, String type, SatisfySDREntity entity) {
 		TransportClient client = EsConnectionFactory.createEsClient();
-		try {
-			// IndexRequest indexRequest = new
-			// IndexRequest(index,type,"AVflaevU2NLgp0KDTiLs")
-			// .source(XContentFactory.jsonBuilder()
-			// .startObject()
-			// .field("SS_APP_NAME", entity.getSsAppName())
-			// .field("SS_VISITOR_ID", entity.getSsVisitorId())
-			// .field("SS_SESSION_ID", entity.getSsSessionId())
-			// .field("SS_AGENT_ID",entity.getSsAgentId())
-			// .field("SS_ENTERPRISE_ID",entity.getSsEnterpriseId())
-			// .field("SS_SATISFY_SCORE", entity.getSsSatisfyScore())
-			// .field("SS_WORKGROUP_ID", entity.getWorkgroupId())
-			// .field("SS_CHANNEL_NO", entity.getChannelNo())
-			// .field("SS_TIME", entity.getSsTime())
-			// .endObject());
+		//主键
+try{
+	IndexRequest indexRequest = new IndexRequest(index, type.toUpperCase(), "789872343").source(XContentFactory
+			.jsonBuilder().startObject()
+			.field("SS_SESSION_ID", "test12345677234")
+			.endObject());
+	UpdateRequest updateRequest = new UpdateRequest(index, type, "789872343").doc(
+			XContentFactory.jsonBuilder().startObject()
+			.field("SS_ENTERPRISE_ID", "updateEntierpriserid")
+			.endObject())
+			.upsert(indexRequest);
+	UpdateResponse response = client.update(updateRequest).get();
+	System.out.println(response.getId());
+}catch(Exception e){
+	e.printStackTrace();
+}
+		
 
-			// UpdateRequest updateRequest = new UpdateRequest(index, type,
-			// "AVflaevU2NLgp0KDTiLs")
-			// .doc(XContentFactory.jsonBuilder()
-			// .startObject()
-			//// .field("SS_APP_NAME", entity.getSsAppName())
-			//// .field("SS_VISITOR_ID", entity.getSsVisitorId())
-			//// .field("SS_SESSION_ID", entity.getSsSessionId())
-			//// .field("SS_AGENT_ID",entity.getSsAgentId())
-			//// .field("SS_ENTERPRISE_ID",entity.getSsEnterpriseId())
-			//// .field("SS_SATISFY_SCORE", entity.getSsSatisfyScore())
-			//// .field("SS_WORKGROUP_ID", entity.getWorkgroupId())
-			//// .field("SS_CHANNEL_NO", entity.getChannelNo())
-			// .field("VS_VISITOR_ENGINE", "")
-
-			try {
-				UpdateByQueryRequestBuilder ubqrb = UpdateByQueryAction.INSTANCE.newRequestBuilder(client);
-				// ubqrb.filter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("ST_ENTERPRISE_ID",
-				// "nnvxytfuync0nq")))
-				// .filter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("ST_TAG_ID1",
-				// "1015")))
-
-				// .script(new
-				// Script("ctx._source.ST_TAG_ID2=5")).source().get();
-				// Map<String,String>dataMap=new HashMap<String,String>();
-				// dataMap.put("ST_TAG_ID2", "2");
-				// dataMap.put("ST_TAG_ID3", "3");
-				Map<String, Object> dataMap = new HashMap<String, Object>();
-				Script s = new Script(ScriptType.INLINE, Script.DEFAULT_SCRIPT_LANG,
-						"[ctx._source.QS_ID='new1234567989ID34543543']", dataMap);
-				BulkIndexByScrollResponse r = ubqrb.source(index).script(s)
-						.filter(QueryBuilders.boolQuery()
-								.must(QueryBuilders.termQuery("QS_ENTERPRISE_ID", "ctdiznh1b3rnbg")))
-						.filter(QueryBuilders.boolQuery()
-								.must(QueryBuilders.termQuery("QS_SESSION_ID", "fhnxzt13015-hui2")))
-						.get();
-				System.out.println(r.getUpdated());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} finally {
-			client.close();
-		}
+//			try {
+//				UpdateByQueryRequestBuilder ubqrb = UpdateByQueryAction.INSTANCE.newRequestBuilder(client);
+//				// ubqrb.filter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("ST_ENTERPRISE_ID",
+//				// "nnvxytfuync0nq")))
+//				// .filter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("ST_TAG_ID1",
+//				// "1015")))
+//
+//				// .script(new
+//				// Script("ctx._source.ST_TAG_ID2=5")).source().get();
+//				// Map<String,String>dataMap=new HashMap<String,String>();
+//				// dataMap.put("ST_TAG_ID2", "2");
+//				// dataMap.put("ST_TAG_ID3", "3");
+//				Map<String, Object> dataMap = new HashMap<String, Object>();
+//				Script s = new Script(ScriptType.INLINE, Script.DEFAULT_SCRIPT_LANG,
+//						"[ctx._source.QS_ID='new1234567989ID34543543']", dataMap);
+//				BulkIndexByScrollResponse r = ubqrb.source(index).script(s)
+//						.filter(QueryBuilders.boolQuery()
+//								.must(QueryBuilders.termQuery("QS_ENTERPRISE_ID", "ctdiznh1b3rnbg")))
+//						.filter(QueryBuilders.boolQuery()
+//								.must(QueryBuilders.termQuery("QS_SESSION_ID", "fhnxzt13015-hui2")))
+//						.get();
+//				System.out.println(r.getUpdated());
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		} finally {
+//			client.close();
+//		}
 	}
 
 	/**

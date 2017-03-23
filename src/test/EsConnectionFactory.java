@@ -39,7 +39,7 @@ public  class EsConnectionFactory {
 	public static TransportClient createEsClient() {
 		  try {
               //设置集群名称
-              Settings settings = Settings.builder().put("cluster.name", "elasticsearch").build();
+              Settings settings = Settings.builder().build();
               //创建client
                client = new PreBuiltTransportClient(settings)
                       .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(ip), port));
