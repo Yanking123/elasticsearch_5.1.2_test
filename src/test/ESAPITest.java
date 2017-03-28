@@ -38,24 +38,22 @@ public class ESAPITest extends EsJdbcDaoSupport {
 //		System.out.println((int) Math.rint((1* 100.0) / 0));
 		deleteAllIndex();
 		ESAPITest st =new ESAPITest();
-//		st.updateIndex();
-		st.createStSeesionTagSdr("st_session_tag");
-		st.create_st_storage_files_Sdr("st_storage_files");
-		st.create_st_cc_group_traffic_sdr("st_cc_group_traffic_sdr");
+////		st.updateIndex();
+//		st.createStSeesionTagSdr("st_session_tag");
+//		st.create_st_storage_files_Sdr("st_storage_files");
+//		st.create_st_cc_group_traffic_sdr("st_cc_group_traffic_sdr");
 		st.create_st_cc_agent_traffic_sdr("st_cc_agent_traffic_sdr");
-		st.create_st_agent_visitor_sdr("st_agent_visitor_sdr");
-		st.create_st_agent_visitor_manual_sdr("st_agent_visitor_manual_sdr");
-		st.create_st_agent_transfer_sdr("st_agent_transfer_sdr");
-		st.create_st_agent_session_sdr("st_agent_session_sdr");
-		st.create_st_agent_satisfy_sdr("st_agent_satisfy_sdr");
-		st.create_st_agent_qs_detail_sdr("st_agent_qs_detail_sdr");
-		st.create_st_agent_order_sdr("st_agent_order_sdr");
-		st.create_st_agent_online_time_sdr("st_agent_online_time_sdr");
-		st.create_st_agent_online_sdr("st_agent_online_sdr");
-		st.create_cc_agent_status_history("cc_agent_status_history");
-		System.out.println("index create success!");
-		
-	
+//		st.create_st_agent_visitor_sdr("st_agent_visitor_sdr");
+//		st.create_st_agent_visitor_manual_sdr("st_agent_visitor_manual_sdr");
+//		st.create_st_agent_transfer_sdr("st_agent_transfer_sdr");
+//		st.create_st_agent_session_sdr("st_agent_session_sdr");
+//		st.create_st_agent_satisfy_sdr("st_agent_satisfy_sdr");
+//		st.create_st_agent_qs_detail_sdr("st_agent_qs_detail_sdr");
+//		st.create_st_agent_order_sdr("st_agent_order_sdr");
+//		st.create_st_agent_online_time_sdr("st_agent_online_time_sdr");
+//		st.create_st_agent_online_sdr("st_agent_online_sdr");
+//		st.create_cc_agent_status_history("cc_agent_status_history");
+//		System.out.println("index create success!");
 ////		st.testDelete();
 //		for(int i=1;i<20;i++){
 //			st.putSDR(i);
