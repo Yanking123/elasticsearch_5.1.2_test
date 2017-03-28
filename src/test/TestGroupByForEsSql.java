@@ -17,8 +17,9 @@ import org.elasticsearch.common.xcontent.XContentFactory;
  *  通过测试，工程内没因为最新修改后的jar包不生效，需要引用最新jar包
  *  放到插件中用只是在网页sql插件中使用
  *  所以修改的地方有两个：
- *  1：工程内覆盖原来的jar
- *  2：es插件目录下引用修改后的jar
+ *  1：工程内覆盖原来的jar(elasticsearch-5.1.2.jar)
+ *  2：es插件目录下引用修改后的jar(elasticsearch-5.1.2.jar)
+ *  只需替换一个jar即可
  * </pre>
  * @author 王文辉  wangwenhui@jiaxincloud.com
  * @version 1.00.00
@@ -27,10 +28,10 @@ import org.elasticsearch.common.xcontent.XContentFactory;
  *    修改后版本:     修改人：  修改日期:     修改内容: 
  * </pre>
  */
-public class ESAPITest2 extends EsJdbcDaoSupport {
+public class TestGroupByForEsSql extends EsJdbcDaoSupport {
 
 	public  static void main(String[] args) throws Exception {
-		ESAPITest2 st =new ESAPITest2();
+		TestGroupByForEsSql st =new TestGroupByForEsSql();
 		st.testJDBC();
 	}
 
