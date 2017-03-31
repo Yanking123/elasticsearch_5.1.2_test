@@ -9,6 +9,7 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.ElasticSearchDruidDataSourceFactory;
+import com.alibaba.druid.util.StringUtils;
 /**
  * 
  * <pre>
@@ -22,13 +23,9 @@ import com.alibaba.druid.pool.ElasticSearchDruidDataSourceFactory;
  * </pre>
  */
 public  class EsConnectionFactory {
-	
-	private final static String ip="127.0.0.1";
-//	private final static String ip="59.46.81.19";
-//	private static String address="59.46.81.19:9300,59.46.81.17:9300";
-//	private final static String ip2="59.46.81.17";
 	private final static int port=9300;
- 
+    public static String cluster_name="";
+    public static String cluster_ip="127.0.0.1";
 	static TransportClient client;
 
 /**
@@ -41,8 +38,12 @@ public  class EsConnectionFactory {
               //设置集群名称
               Settings settings = Settings.builder().build();
               //创建client
+              if(!StringUtils.isEmpty(cluster_name)){
+            	  settings = Settings.builder().put("cluster.name", cluster_name)
+  						.put("client.transport.sniff", "false").build();
+              }
                client = new PreBuiltTransportClient(settings)
-                      .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(ip), port));
+                      .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(cluster_ip), port));
           } catch (Exception e) {
               e.printStackTrace();
           }
@@ -57,7 +58,7 @@ public  class EsConnectionFactory {
 	public static DruidDataSource getEsDataSource(String index) {
 		try{
 	        Properties properties = new Properties();
-	        properties.put("url", "jdbc:elasticsearch://"+ip+":"+port+"/"+index );
+	        properties.put("url", "jdbc:elasticsearch://"+cluster_ip+":"+port+"/"+index );
 	        DruidDataSource dds = (DruidDataSource) ElasticSearchDruidDataSourceFactory.createDataSource(properties);
 	        if(dds!=null){
 	        	return dds;

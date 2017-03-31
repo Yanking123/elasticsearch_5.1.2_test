@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="lib" path="lib/elasticsearch-5.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/HdrHistogram-2.1.6.jar"/>
 	<classpathentry kind="lib" path="lib/hppc-0.7.1.jar"/>
@@ -12,9 +13,6 @@
 	<classpathentry kind="lib" path="lib/joda-time-2.9.5.jar"/>
 	<classpathentry kind="lib" path="lib/jopt-simple-5.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jts-1.13.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2-api-2.7.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-api-2.7.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-core-2.7.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-analyzers-common-6.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-backward-codecs-6.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-6.3.0.jar"/>
@@ -65,6 +63,9 @@
 	<classpathentry kind="lib" path="lib/guava.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-2.4.6-indy.jar"/>
 	<classpathentry kind="lib" path="lib/lang-groovy-5.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2-api-2.7.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-api-2.7.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-core-2.7.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_65"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

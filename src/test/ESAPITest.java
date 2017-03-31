@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
@@ -29,31 +30,43 @@ import org.elasticsearch.common.xcontent.XContentFactory;
  * </pre>
  */
 public class ESAPITest extends EsJdbcDaoSupport {
-
-	public  static void main(String[] args) throws Exception {
-//		Object data=new Object();
 	
-//		System.out.println(checkObjectIsArray(data));
-//		(int) Math.rint((1* 100.0) / 0);
-//		System.out.println((int) Math.rint((1* 100.0) / 0));
-		deleteAllIndex();
-		ESAPITest st =new ESAPITest();
+	@SuppressWarnings("resource")
+	public  static void main(String[] args) throws Exception {
+			Scanner scanner = new Scanner(System.in);// 创建输入流扫描器
+	        System.out.print("set cluster.name：");// 提示用户输入
+	        String line = scanner.nextLine();// 获取用户输入的一行文本
+	        // 打印对输入文本的描述
+	        System.out.println("cluster.name->" + line);
+	        String cluster_name=line;
+	        System.out.print("set cluster.ip：");// 提示用户输入
+	        String lineIp = scanner.nextLine();// 获取用户输入的一行文本
+	        // 打印对输入文本的描述
+	        System.out.println("cluster.ip->" + lineIp);
+	        EsConnectionFactory.cluster_name=cluster_name;
+	        EsConnectionFactory.cluster_ip=lineIp;
+	        System.out.println("****************clear all index first,please wait !******************" );
+	        deleteAllIndex();
+		   ESAPITest st =new ESAPITest();
 ////		st.updateIndex();
-//		st.createStSeesionTagSdr("st_session_tag");
-//		st.create_st_storage_files_Sdr("st_storage_files");
-//		st.create_st_cc_group_traffic_sdr("st_cc_group_traffic_sdr");
+		   System.out.println("****************creating index,please wait !******************" );
+		st.createStSeesionTagSdr("st_session_tag");
+		st.create_st_storage_files_Sdr("st_storage_files");
+		st.create_st_cc_group_traffic_sdr("st_cc_group_traffic_sdr");
 		st.create_st_cc_agent_traffic_sdr("st_cc_agent_traffic_sdr");
-//		st.create_st_agent_visitor_sdr("st_agent_visitor_sdr");
-//		st.create_st_agent_visitor_manual_sdr("st_agent_visitor_manual_sdr");
-//		st.create_st_agent_transfer_sdr("st_agent_transfer_sdr");
-//		st.create_st_agent_session_sdr("st_agent_session_sdr");
-//		st.create_st_agent_satisfy_sdr("st_agent_satisfy_sdr");
-//		st.create_st_agent_qs_detail_sdr("st_agent_qs_detail_sdr");
-//		st.create_st_agent_order_sdr("st_agent_order_sdr");
-//		st.create_st_agent_online_time_sdr("st_agent_online_time_sdr");
-//		st.create_st_agent_online_sdr("st_agent_online_sdr");
-//		st.create_cc_agent_status_history("cc_agent_status_history");
-//		System.out.println("index create success!");
+		st.create_st_agent_visitor_sdr("st_agent_visitor_sdr");
+		st.create_st_agent_visitor_manual_sdr("st_agent_visitor_manual_sdr");
+		st.create_st_agent_transfer_sdr("st_agent_transfer_sdr");
+		st.create_st_agent_session_sdr("st_agent_session_sdr");
+		st.create_st_agent_satisfy_sdr("st_agent_satisfy_sdr");
+		st.create_st_agent_qs_detail_sdr("st_agent_qs_detail_sdr");
+		st.create_st_agent_order_sdr("st_agent_order_sdr");
+		st.create_st_agent_online_time_sdr("st_agent_online_time_sdr");
+		st.create_st_agent_online_sdr("st_agent_online_sdr");
+		st.create_cc_agent_status_history("cc_agent_status_history");
+		System.out.println("****************Congratulations! Indexs created successfully******************" );
+		System.out.println("****************Let us see the index status!******************" );
+	    st.getHealth();
 ////		st.testDelete();
 //		for(int i=1;i<20;i++){
 //			st.putSDR(i);

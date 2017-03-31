@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
@@ -52,7 +51,6 @@ public class EsJdbcDaoSupport {
 	public void insert(String index, String type, Map<String, Object> dataMap) {
 		TransportClient client = EsConnectionFactory.createEsClient();
 		IndexResponse response = client.prepareIndex(index.trim(), type.trim()).setSource(dataMap).get();
-		Logger.getLogger(EsJdbcDaoSupport.class).info(response);
 		client.close();
 	}
 
@@ -185,11 +183,11 @@ try{
 		System.out.println("numberOfNodes->" + numberOfNodes);
 		for (ClusterIndexHealth health : healths.getIndices().values()) {
 			String index = health.getIndex();
-			System.out.println("index->" + index);
+//			System.out.println("index->" + index);
 			int numberOfShards = health.getNumberOfShards();
-			System.out.println("index->" + index + ",numberOfShards->" + numberOfShards);
+//			System.out.println("index->" + index + ",numberOfShards->" + numberOfShards);
 			int numberOfReplicas = health.getNumberOfReplicas();
-			System.out.println("index->" + index + ",numberOfReplicas->" + numberOfReplicas);
+//			System.out.println("index->" + index + ",numberOfReplicas->" + numberOfReplicas);
 			ClusterHealthStatus status = health.getStatus();
 			System.out.println("index->" + index + ",status->" + status);
 		}
