@@ -51,7 +51,6 @@ public class EsJdbcDaoSupport {
 	public void insert(String index, String type, Map<String, Object> dataMap) {
 		TransportClient client = EsConnectionFactory.createEsClient();
 		IndexResponse response = client.prepareIndex(index.trim(), type.trim()).setSource(dataMap).get();
-		client.close();
 	}
 
 	/**

@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
@@ -37,11 +36,16 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		ESAPITest st = new ESAPITest();
 		// 执行创建索引方法
 		st.createIndex();
-		//// st.testDelete();
-		// for(int i=1;i<20;i++){
-		// st.putSDR(i);
-		// }
-		// st.testJDBC();
+//		 st.testDelete();
+		 for(int i=1;i<1000;i++){
+			 System.out.println("current cout->"+i);
+			long begin=System.currentTimeMillis();
+			
+		 st.putSDR(i);
+			long end=System.currentTimeMillis();
+			System.out.println("cost time->"+(end-begin)+"ms");
+		 }
+//		 st.testJDBC();
 		// st.testDelete();
 		// st.updateSDR();
 		// st.getHealth();
@@ -50,18 +54,16 @@ public class ESAPITest extends EsJdbcDaoSupport {
 
 	@SuppressWarnings("resource")
 	public void createIndex() {
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("set cluster.name：");
-		String line = scanner.nextLine();
+//		Scanner scanner = new Scanner(System.in);
+//		System.out.print("set cluster.name：");
+//		String line = scanner.nextLine();
 		// es集群名称
-		System.out.println("cluster.name->" + line);
-		String cluster_name = line;
+//		System.out.println("cluster.name->" + line);
+//		String cluster_name = line;
 		// es集群ip
-		System.out.print("set cluster.ip：");
-		String lineIp = scanner.nextLine();
-		System.out.println("cluster.ip->" + lineIp);
-		EsConnectionFactory.cluster_name = cluster_name;
-		EsConnectionFactory.cluster_ip = lineIp;
+//		System.out.print("set cluster.ip：");
+//		String lineIp = scanner.nextLine();
+//		System.out.println("cluster.ip->" + lineIp);
 		System.out.println("****************clear all index first,please wait !******************");
 		// 删除现有所有索引
 		deleteAllIndex();
@@ -69,19 +71,19 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		try {
 			// 逐个创建索引
 			create_st_seesion_tag_sdr("st_session_tag");
-			create_st_storage_files_sdr("st_storage_files");
-			create_st_cc_group_traffic_sdr("st_cc_group_traffic_sdr");
-			create_st_cc_agent_traffic_sdr("st_cc_agent_traffic_sdr");
-			create_st_agent_visitor_sdr("st_agent_visitor_sdr");
-			create_st_agent_visitor_manual_sdr("st_agent_visitor_manual_sdr");
-			create_st_agent_transfer_sdr("st_agent_transfer_sdr");
-			create_st_agent_session_sdr("st_agent_session_sdr");
-			create_st_agent_satisfy_sdr("st_agent_satisfy_sdr");
-			create_st_agent_qs_detail_sdr("st_agent_qs_detail_sdr");
-			create_st_agent_order_sdr("st_agent_order_sdr");
-			create_st_agent_online_time_sdr("st_agent_online_time_sdr");
-			create_st_agent_online_sdr("st_agent_online_sdr");
-			create_cc_agent_status_history("cc_agent_status_history");
+//			create_st_storage_files_sdr("st_storage_files");
+//			create_st_cc_group_traffic_sdr("st_cc_group_traffic_sdr");
+//			create_st_cc_agent_traffic_sdr("st_cc_agent_traffic_sdr");
+//			create_st_agent_visitor_sdr("st_agent_visitor_sdr");
+//			create_st_agent_visitor_manual_sdr("st_agent_visitor_manual_sdr");
+//			create_st_agent_transfer_sdr("st_agent_transfer_sdr");
+//			create_st_agent_session_sdr("st_agent_session_sdr");
+//			create_st_agent_satisfy_sdr("st_agent_satisfy_sdr");
+//			create_st_agent_qs_detail_sdr("st_agent_qs_detail_sdr");
+//			create_st_agent_order_sdr("st_agent_order_sdr");
+//			create_st_agent_online_time_sdr("st_agent_online_time_sdr");
+//			create_st_agent_online_sdr("st_agent_online_sdr");
+//			create_cc_agent_status_history("cc_agent_status_history");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -126,7 +128,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -165,7 +167,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -312,7 +314,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -424,7 +426,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -479,7 +481,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -530,7 +532,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -577,7 +579,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -650,7 +652,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -696,7 +698,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -738,7 +740,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -774,7 +776,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -809,7 +811,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -841,7 +843,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -875,7 +877,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} else {
 			System.err.println("Index creation failed.");
 		}
-		client.close();
+//		client.close();
 	}
 
 	/**
@@ -933,10 +935,12 @@ public class ESAPITest extends EsJdbcDaoSupport {
 	 */
 	public void putSDR(int i) {
 		Map<String, Object> json = new HashMap<String, Object>();
-		json.put("QS_ID", System.currentTimeMillis());
-		json.put("QS_ENTERPRISE_ID", "ctdiznh1b3rnbg");
-		json.put("QS_SESSION_ID", "fhnxzt13015-hui3-" + i);
-		insert("test3", "TEST3", json);
+		json.put("ST_WORKGROUP_ID", System.currentTimeMillis());
+		json.put("ST_ENTERPRISE_ID", "ctdiznh1b3rnbg");
+		json.put("ST_SESSION_ID", "fhnxzt13015-hui3-" + i);
+		json.put("ST_TAG_ID3",  i);
+		json.put("ST_AGENT_ID", "fhnxzt13015-hui3-" + i);
+		insert("st_session_tag", "ST_SESSION_TAG", json);
 		System.out.println("insert success.");
 	}
 

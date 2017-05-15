@@ -1,15 +1,10 @@
 package test;
-import java.net.InetAddress;
 import java.util.Properties;
 
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.ElasticSearchDruidDataSourceFactory;
-import com.alibaba.druid.util.StringUtils;
 /**
  * 
  * <pre>
@@ -24,30 +19,25 @@ import com.alibaba.druid.util.StringUtils;
  */
 public  class EsConnectionFactory {
 	private final static int port=9300;
-    public static String cluster_name="";
-    public static String cluster_ip="127.0.0.1";
+    public static String ES_ADDRESS="127.0.0.1:9300,127.0.0.2:9300";
 	static TransportClient client;
+	
+	static{
+		  ClientHelper.getInstance().init();
+	}
 
 /**
  * 
  * @return
  */
-	@SuppressWarnings("resource")
 	public static TransportClient createEsClient() {
-		  try {
-              //设置集群名称
-              Settings settings = Settings.builder().build();
-              //创建client
-              if(!StringUtils.isEmpty(cluster_name)){
-            	  settings = Settings.builder().put("cluster.name", cluster_name)
-  						.put("client.transport.sniff", "false").build();
-              }
-               client = new PreBuiltTransportClient(settings)
-                      .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(cluster_ip), port));
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
-          return client;
+			  try {
+//					ElasticSearchConnection esc=new ElasticSearchConnection("jdbc:elasticsearch://"+ES_ADDRESS);
+					client=ClientHelper.getInstance().getClient();
+	          } catch (Exception e) {
+	              e.printStackTrace();
+	          }
+	   return client;
       }
 	
 	/**
@@ -58,7 +48,7 @@ public  class EsConnectionFactory {
 	public static DruidDataSource getEsDataSource(String index) {
 		try{
 	        Properties properties = new Properties();
-	        properties.put("url", "jdbc:elasticsearch://"+cluster_ip+":"+port+"/"+index );
+	        properties.put("url", "jdbc:elasticsearch://"+ES_ADDRESS+":"+port+"/"+index );
 	        DruidDataSource dds = (DruidDataSource) ElasticSearchDruidDataSourceFactory.createDataSource(properties);
 	        if(dds!=null){
 	        	return dds;
