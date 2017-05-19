@@ -1,9 +1,10 @@
 package test;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -19,7 +20,9 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.BulkIndexByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryAction;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.ElasticSearchDruidDataSource;
+import com.alibaba.druid.pool.ElasticSearchDruidPooledConnection;
+import com.alibaba.druid.pool.ElasticSearchDruidPooledPreparedStatement;
 
 /**
  * 
@@ -49,7 +52,7 @@ public class EsJdbcDaoSupport {
 	 * @return boolean
 	 */
 	public void insert(String index, String type, Map<String, Object> dataMap) {
-		TransportClient client = EsConnectionFactory.createEsClient();
+		TransportClient client = EsConnectionFactory2.transportClient;
 		IndexResponse response = client.prepareIndex(index.trim(), type.trim()).setSource(dataMap).get();
 	}
 
@@ -114,43 +117,40 @@ try{
 //		}
 	}
 
+	
 	/**
-	 * 查询es记录
+	 * 查询列表
 	 * 
-	 * @param index
-	 *            数据库
-	 * @param type
-	 *            表
-	 * @param dataMap
-	 *            字段对应的数据
-	 * @return boolean
+	 * @param <T>
+	 * 
+	 * @param sql
+	 * @param args
+	 * @return
+	 * @throws SQLException
 	 */
-	public ResultSet query(String sql, String index) {
-		DruidDataSource dds = null;
-		Connection connection = null;
-		PreparedStatement ps = null;
+	public <T> List<T> getModeList(String index, String sql, Object[] args) {
+		ElasticSearchDruidDataSource dds = null;
+		ElasticSearchDruidPooledConnection  connection = null;
+		ElasticSearchDruidPooledPreparedStatement ps = null;
+		ResultSet resultSet = null;
+		List<T> result = new ArrayList<T>();
 		try {
-			int begin = 0;
-			int end = 0;
-			System.out.println("connect to index:" + index);
 			dds = EsConnectionFactory.getEsDataSource(index);
-			connection = dds.getConnection();
-			ps = connection.prepareStatement(sql);
-			ResultSet resultSet = ps.executeQuery();
-			return resultSet;
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("occur error");
-		} finally {
-			try {
-				ps.close();
-				connection.close();
-				dds.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+			connection =(ElasticSearchDruidPooledConnection) dds.getConnection();
+			ps =  (ElasticSearchDruidPooledPreparedStatement) connection.prepareStatement(sql);
+			resultSet =  ps.executeQuery();
+			if (resultSet != null ) {
+				while (resultSet.next()) {
+					System.out.println(resultSet.getString(0) );
+				}
 			}
+		} catch (Exception e) {
+		e.printStackTrace();
+		} finally {
+			closeConn(resultSet, ps, connection);
 		}
-		return null;
+		return result;
+
 	}
 
 	/**
@@ -190,6 +190,36 @@ try{
 			ClusterHealthStatus status = health.getStatus();
 			System.out.println("index->" + index + ",status->" + status);
 		}
+	}
+	
+	/**
+	 * 关闭连接
+	 * @param ps
+	 * @param connection
+	 */
+	private void closeConn(ResultSet resultSet,PreparedStatement ps,ElasticSearchDruidPooledConnection connection){
+		try {
+			if(resultSet!=null){
+				resultSet.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			if(ps!=null){
+				ps.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			if(connection!=null){
+				connection.close();
+			}
+		} catch (Exception e) {
+		e.printStackTrace();
+		}
+	
 	}
 
 }

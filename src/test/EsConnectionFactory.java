@@ -1,10 +1,15 @@
 package test;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.elasticsearch.client.transport.TransportClient;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.ElasticSearchDruidDataSource;
 import com.alibaba.druid.pool.ElasticSearchDruidDataSourceFactory;
+
+
+
 /**
  * 
  * <pre>
@@ -18,8 +23,7 @@ import com.alibaba.druid.pool.ElasticSearchDruidDataSourceFactory;
  * </pre>
  */
 public  class EsConnectionFactory {
-	private final static int port=9300;
-    public static String ES_ADDRESS="127.0.0.1:9300,127.0.0.2:9300";
+    public static String ES_ADDRESS="172.16.54.74:19300";
 	static TransportClient client;
 	
 	static{
@@ -40,24 +44,43 @@ public  class EsConnectionFactory {
 	   return client;
       }
 	
+private static Map<String,ElasticSearchDruidDataSource> esDSMap = new ConcurrentHashMap<String,ElasticSearchDruidDataSource>();
+	
 	/**
 	 * 创建es数据库连接
 	 * 
 	 * @return
 	 */
-	public static DruidDataSource getEsDataSource(String index) {
-		try{
-	        Properties properties = new Properties();
-	        properties.put("url", "jdbc:elasticsearch://"+ES_ADDRESS+":"+port+"/"+index );
-	        DruidDataSource dds = (DruidDataSource) ElasticSearchDruidDataSourceFactory.createDataSource(properties);
-	        if(dds!=null){
-	        	return dds;
-	        }
-		}catch(Exception e){
-			e.printStackTrace();
+	public  static ElasticSearchDruidDataSource getEsDataSource(String index) {
+		//需要做线程同步 ，多线程并发时 防止创建多个es连接池（不同步线程增加）
+		synchronized(index.intern()){
+			ElasticSearchDruidDataSource ds = esDSMap.get(index);
+			if(ds==null){
+				try{
+			        Properties properties = new Properties();
+			        String url = "jdbc:elasticsearch://"+ES_ADDRESS+"/"+index;
+			        properties.put("url", url );
+			    	ds =   (ElasticSearchDruidDataSource) ElasticSearchDruidDataSourceFactory.createDataSource(properties);
+			    	ds.setAsyncCloseConnectionEnable(true);
+			    	ds.setAccessToUnderlyingConnectionAllowed(true);
+			    	//连接池数 默认为8个  一个连接池 大概有50个线程
+//			    	ds.setMaxActive(4);
+			    	ds.setRemoveAbandoned(true);
+			    	//设置移除超时链接
+			    	ds.setRemoveAbandonedTimeout(180);
+			    	ds.setPoolPreparedStatements(true);
+			    	ds.setInitialSize(1);
+			        if(ds!=null){
+			        	esDSMap.put(index, ds);
+			        }
+				}catch(Exception e){
+				}
+			}
+			return ds;
 		}
-		return null;
+	
 	}
+	
 	
 	
 }

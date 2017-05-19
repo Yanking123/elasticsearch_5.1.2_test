@@ -1,8 +1,5 @@
 package test;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
@@ -119,20 +116,8 @@ public class TestGroupByForEsSql extends EsJdbcDaoSupport {
 	 */
     public  void testJDBC() throws Exception {
     	String sql="SELECT * FROM st_cc_agent_traffic_sdr group by APP_ID,QUEUE_ID,CLIENT_NUMBER";
-    	ResultSet rs=query(sql,"st_cc_agent_traffic_sdr");
-  try{
-	  while (rs.next()) {
-    	  System.out.println( rs.getString("QUEUE_ID") );
-    }
-  }catch(SQLException e ){
-		 String error=e.getCause().toString();
-		 if(error.indexOf("IndexOutOfBoundsException")>0){
-				System.out.println("data is null");
-		 }
-  
-  }
+    	getModeList("st_cc_agent_traffic_sdr", sql, null);
       
     }
-    
   
 }

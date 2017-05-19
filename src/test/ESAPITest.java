@@ -1,8 +1,6 @@
 package test;
 
 import java.lang.reflect.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,23 +31,56 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 public class ESAPITest extends EsJdbcDaoSupport {
 
 	public static void main(String[] args) throws Exception {
-		ESAPITest st = new ESAPITest();
+		
 		// 执行创建索引方法
-		st.createIndex();
-//		 st.testDelete();
-		 for(int i=1;i<1000;i++){
-			 System.out.println("current cout->"+i);
-			long begin=System.currentTimeMillis();
-			
-		 st.putSDR(i);
-			long end=System.currentTimeMillis();
-			System.out.println("cost time->"+(end-begin)+"ms");
-		 }
-//		 st.testJDBC();
+//		st.createIndex();
+////		 st.testDelete();
+//		 for(int i=1;i<10;i++){
+//			 Thread t = new Thread( new Runnable() {
+//					@Override
+//					public void run() {
+//							 for(int j=1;j<1000;j++){
+//							ESAPITest st1 = new ESAPITest();
+//							long begin=System.currentTimeMillis();
+//							 st1.putSDR(j);
+//							long end=System.currentTimeMillis();
+//							System.out.println("cost time->"+(end-begin)+"ms");
+//						
+//					}
+//					}
+//				});
+//			 t.start();
+//		 }
+for(int i=0;i<10;i++){
+	 Thread t = new Thread( new Runnable() {
+			@Override
+			public void run() {
+				int j=0;
+				while(true){
+					long begin=System.currentTimeMillis();
+					ESAPITest st = new ESAPITest();
+					 try {
+						st.testJDBC();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+//					 j++;
+//					 st.putSDR(j);
+//						long end=System.currentTimeMillis();
+//						System.out.println("cost time->"+(end-begin)+"ms");
+				     }
+				
+			}
+		});
+	 t.start();
+}
 		// st.testDelete();
 		// st.updateSDR();
 		// st.getHealth();
 		// st.testDeleteIndex();
+//		ESAPITest st = new ESAPITest();
+//		st.createIndex();
 	}
 
 	@SuppressWarnings("resource")
@@ -69,15 +100,15 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		deleteAllIndex();
 		System.out.println("****************creating index,please wait !******************");
 		try {
-			// 逐个创建索引
-			create_st_seesion_tag_sdr("st_session_tag");
+//			// 逐个创建索引
+//			create_st_seesion_tag_sdr("st_session_tag");
 //			create_st_storage_files_sdr("st_storage_files");
 //			create_st_cc_group_traffic_sdr("st_cc_group_traffic_sdr");
 //			create_st_cc_agent_traffic_sdr("st_cc_agent_traffic_sdr");
 //			create_st_agent_visitor_sdr("st_agent_visitor_sdr");
 //			create_st_agent_visitor_manual_sdr("st_agent_visitor_manual_sdr");
 //			create_st_agent_transfer_sdr("st_agent_transfer_sdr");
-//			create_st_agent_session_sdr("st_agent_session_sdr");
+			create_st_agent_session_sdr("st_agent_session_sdr");
 //			create_st_agent_satisfy_sdr("st_agent_satisfy_sdr");
 //			create_st_agent_qs_detail_sdr("st_agent_qs_detail_sdr");
 //			create_st_agent_order_sdr("st_agent_order_sdr");
@@ -87,9 +118,9 @@ public class ESAPITest extends EsJdbcDaoSupport {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("****************Congratulations! Indexs created successfully******************");
-		System.out.println("****************Let us see the index status!******************");
-		getHealth();
+//		System.out.println("****************Congratulations! Indexs created successfully******************");
+//		System.out.println("****************Let us see the index status!******************");
+//		getHealth();
 	}
 
 	/**
@@ -958,21 +989,22 @@ public class ESAPITest extends EsJdbcDaoSupport {
 	 * @throws Exception
 	 */
 	public void testJDBC() throws Exception {
-		String sql = "SELECT * from test3 group by QS_ENTERPRISE_ID,QS_SESSION_ID";
-		ResultSet rs = query(sql, "test3");
-		try {
-			while (rs.next()) {
-				System.out.println(rs.getString("QS_SESSION_ID"));
-				// System.out.println( rs.getString("QS_ENTERPRISE_ID") );
-
-			}
-		} catch (SQLException e) {
-			String error = e.getCause().toString();
-			if (error.indexOf("IndexOutOfBoundsException") > 0) {
-				System.out.println("data is null");
-			}
-
-		}
+		String sql = "SELECT * from st_session_tag ";
+		getModeList("st_session_tag", sql, null);
+//		try {
+//			while (rs.next()) {
+//				System.out.println(rs.getString("ST_ENTERPRISE_ID"));
+//				// System.out.println( rs.getString("QS_ENTERPRISE_ID") );
+//
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			String error = e.getCause().toString();
+//			if (error.indexOf("IndexOutOfBoundsException") > 0) {
+//				System.out.println("data is null");
+//			}
+//
+//		}
 
 	}
 
@@ -1044,7 +1076,7 @@ public class ESAPITest extends EsJdbcDaoSupport {
 	}
 
 	public static void deleteAllIndex() {
-		TransportClient client = EsConnectionFactory.createEsClient();
+		TransportClient client = EsConnectionFactory2.transportClient;
 		ClusterStateResponse response = client.admin().cluster().prepareState().execute().actionGet();
 		// 获取所有索引
 		String[] indexs = response.getState().getMetaData().getConcreteAllIndices();
