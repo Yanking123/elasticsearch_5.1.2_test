@@ -974,6 +974,13 @@ for(int i=0;i<10;i++){
 		insert("st_session_tag", "ST_SESSION_TAG", json);
 		System.out.println("insert success.");
 	}
+	/**
+	 * 插入doc
+	 */
+	public void putSDRFromCsdn(String index,String type,Map<String,Object>dataMap) {
+		insert(index, type, dataMap);
+		System.out.println("insert success.");
+	}
 
 	/**
 	 * 更新doc
