@@ -24,7 +24,7 @@ public class ClientHelper {
 
     private Map<String, Integer> ips = new HashMap<String, Integer>(); // hostname port
 
-    private String clusterName = "";
+    private String clusterName = "wwh";
 
     private ClientHelper() {
         init();

@@ -20,7 +20,7 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
  */
 public  class EsConnectionFactory2 {
 	private final static String ES_ADDRESS="127.0.0.1:9300";
-	private final static String ES_CLUSTER_NAME="";
+	private final static String ES_CLUSTER_NAME="wwh";
 	
 	public static TransportClient transportClient = null;
 	
