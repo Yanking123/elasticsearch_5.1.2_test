@@ -51,35 +51,36 @@ public class ESAPITest extends EsJdbcDaoSupport {
 //				});
 //			 t.start();
 //		 }
-for(int i=0;i<10;i++){
-	 Thread t = new Thread( new Runnable() {
-			@Override
-			public void run() {
-				int j=0;
-				while(true){
-					long begin=System.currentTimeMillis();
-					ESAPITest st = new ESAPITest();
-					 try {
-						st.testJDBC();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-//					 j++;
-//					 st.putSDR(j);
-//						long end=System.currentTimeMillis();
-//						System.out.println("cost time->"+(end-begin)+"ms");
-				     }
-				
-			}
-		});
-	 t.start();
-}
+//for(int i=0;i<10;i++){
+//	 Thread t = new Thread( new Runnable() {
+//			@Override
+//			public void run() {
+//				int j=0;
+//				while(true){
+//					long begin=System.currentTimeMillis();
+//					ESAPITest st = new ESAPITest();
+//					 try {
+//						st.testJDBC();
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+////					 j++;
+////					 st.putSDR(j);
+////						long end=System.currentTimeMillis();
+////						System.out.println("cost time->"+(end-begin)+"ms");
+//				     }
+//				
+//			}
+//		});
+//	 t.start();
+//}
 		// st.testDelete();
 		// st.updateSDR();
 		// st.getHealth();
-		// st.testDeleteIndex();
-//		ESAPITest st = new ESAPITest();
+		
+		ESAPITest st = new ESAPITest();
+		 st.deleteAllIndex();
 //		st.createIndex();
 	}
 
@@ -949,6 +950,46 @@ for(int i=0;i<10;i++){
 		}
 		client.close();
 	}
+	
+	/**
+	 * 创建es index
+	 * 
+	 * @throws Exception
+	 */
+	public static void createFundIndex(String index) throws Exception {
+		XContentBuilder mapping = XContentFactory.jsonBuilder().startObject().startObject("settings")
+				.field("number_of_shards", 5) // 分片
+				.field("number_of_replicas", 1)// 副片
+				.endObject().startObject("mappings").startObject(index.toUpperCase())// type
+				.startObject("properties")
+				.startObject("name").field("type", "keyword").endObject() // 字段名
+				.startObject("fund_id").field("type", "keyword").endObject()
+				.startObject("sumVal").field("type", "float").endObject()
+				.startObject("bonus").field("type", "float").endObject()
+				.startObject("oneMonthPercent").field("type", "float").endObject()
+				.startObject("threeMonthPercent").field("type", "float").endObject()
+				.startObject("sixMonthPercent").field("type", "float").endObject()
+				.startObject("oneYearPercent").field("type", "float").endObject()
+				.startObject("threeYearPercent").field("type", "float").endObject()
+				.startObject("openPercent").field("type", "float").endObject()
+				.startObject("pastValPercent").field("type", "float").endObject()
+				.startObject("pastVal").field("type", "float").endObject() // keyword 为不分析，text为分析字段
+				.startObject("currentVal").field("type", "float").endObject() // keyword 为不分析，text为分析字段
+				.startObject("openDay").field("type", "date").field("format", "yyyy-MM-dd").endObject() // keyword
+				.startObject("type").field("type", "keyword").endObject() // keyword
+				.endObject().endObject().endObject().endObject();
+		
+		TransportClient client = EsConnectionFactory.createEsClient();
+		CreateIndexRequestBuilder cirb = client.admin().indices().prepareCreate(index.toLowerCase())// index名
+				.setSource(mapping);
+		CreateIndexResponse response = cirb.execute().actionGet();
+		if (response.isAcknowledged()) {
+			System.out.println(index + "->Index created.");
+		} else {
+			System.err.println("Index creation failed.");
+		}
+		client.close();
+	}
 
 	/**
 	 * 更新index 字段
@@ -1088,6 +1129,9 @@ for(int i=0;i<10;i++){
 		// 获取所有索引
 		String[] indexs = response.getState().getMetaData().getConcreteAllIndices();
 		for (String index : indexs) {
+			if(index!=null&&index.equals(".kibana")){
+				continue;
+			}
 			// 清空所有索引。
 			DeleteIndexResponse deleteIndexResponse = client.admin().indices().prepareDelete(index).execute()
 					.actionGet();

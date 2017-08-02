@@ -53,9 +53,14 @@ public class EsJdbcDaoSupport {
 	 */
 	public void insert(String index, String type, Map<String, Object> dataMap) {
 		TransportClient client = EsConnectionFactory2.transportClient;
-		String id=dataMap.get("id").toString();
-		dataMap.remove("id");
-		IndexResponse response = client.prepareIndex(index.trim(), type.trim()).setSource(dataMap).setId(id).get();
+		IndexResponse response=null;
+		if(dataMap.get("id")!=null){
+			String id=dataMap.get("id").toString();
+			dataMap.remove("id");
+			 response = client.prepareIndex(index.trim(), type.trim()).setSource(dataMap).setId(id).get();
+		}else{
+			 response = client.prepareIndex(index.trim(), type.trim()).setSource(dataMap).get();
+		}
 		System.out.println(response.getId());
 	}
 
